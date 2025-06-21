@@ -1,4 +1,4 @@
-# 🧠 Asistente_ciberfisico_recordatorios  
+# 🧠 Asistente ciberfisico para recordatorios  
 **Proyecto 3 - Taller de Sistemas Embebidos**  
 Sistema de un Asistente ciberfísico para recordatorios a adultos mayores  
 
