@@ -25,7 +25,9 @@ El sistema es capaz de generar mensajes como:
 - [🛠️Tutorial](#-tutorial)
 - [⚠️ Errores y Consideraciones](#️-errores-y-consideraciones)
 - [✅ Conclusiones](#-conclusiones)
+- [⚙️ Prototipo](#-prototipo)
 - [📚 Referencias](#referencias)
+
 
 ---
 
@@ -40,7 +42,16 @@ El sistema es capaz de generar mensajes como:
 - 📡 **Comunicación Serial UART**
 - 💻 **Arduino IDE**
 
+
+La arquitectura del sistema se muestra en la siguiente imagen.
+
+<img src="img/arquitectura.png" alt="Arquitectura del sistema" width="600"/>
+
 ---
+
+
+
+
 
 ## 📋 Sistema FreeRTOS 
 
@@ -101,7 +112,7 @@ flowchart TD
 ```
 Es importante aclarar que las tareas `(T5) TaskHeartbeat` y la tarea `(T6) TaskControlFlujo`, son tareas que por su naturaleza están implicitas dentro del sistema, estas se ejecutan cada cierto tiempo y definen aspectos importantes en la trama, razón por la que no aparecen en el diagrama de flujo de manera explícita.  
 
-
+---
 
 ## 📁 Estructura del Proyecto
 
@@ -117,6 +128,7 @@ Asistente_ciberfisico_recordatorios/
     └── interfaz_serial.py       # Script que permite enviar prompts al servidor desde la PC
 
 ```
+---
 
 ## 🛠️ Tutorial
 
@@ -171,7 +183,7 @@ Ejecutar `interfaz_serial.py` para iniciar la comunicación desde PC,.
 python interfaz_serial.py
 ```
 
-### ✅ ¡Listo!
+### ✅ 5. ¡Listo!
 El sistema comenzará a funcionar automáticamente:
 
 - El ESP32 enviará el comando "Generar" cada 30 segundos.
@@ -209,8 +221,7 @@ Estos modelos presentaron fallos o respuestas inestables, como:
 > Este modelo entregó respuestas claras, coherentes y adecuadas para ser procesadas por el ESP32.
 
 ### ✅ Recomendación
-
-> ⚠️ **Antes de integrar un modelo LLM local al sistema, recomiendo probarlo antes manualmente con prompts de ejemplo.**  
+ ⚠️ **Antes de integrar un modelo LLM local al sistema, recomiendo probarlo antes manualmente con prompts de ejemplo.**  
 > Esto ayudará a validar que su comportamiento sea estable y que las respuestas sean compatibles con los filtros del microcontrolador.
 
 Es importante siempre Tener en cuenta:
@@ -254,11 +265,15 @@ Esperando comando: "Generar"
 
 - 💡 **El enfoque ciberfísico aplicado aquí puede escalarse** para otras aplicaciones similares que requieran comunicación autónoma, generación de contenido local, o interacción sin conexión con el usuario final.
 
-🎉 Este proyecto representa una combinación efectiva de tecnologías modernas (LLM + RTOS + UART) para resolver una necesidad real de comunicación, con enfoque social y técnico.
+- 🎉 Este proyecto representa una combinación de tecnologías modernas (LLM + RTOS + UART) para resolver una necesidad.
 
+---
 
+## ⚙️ Prototipo
 
+El prototipo del sistema se muestra en la siguiente figura.
 
+<img src="img/prototipo.png" alt="Prototipo del sistema" width="1000"/>
 
 
 
