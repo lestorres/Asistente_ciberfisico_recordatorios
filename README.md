@@ -89,6 +89,73 @@ Es importante aclarar que las tareas `(T5) TaskHeartbeat` y la tarea `(T6) TaskC
 
 
 
+## 🛠️ Tutorial de Instalación y Ejecución
+
+Este proyecto permite generar mensajes amigables para personas adultas mayores usando un microcontrolador ESP32 y un modelo de lenguaje grande (LLM) ejecutado localmente. A continuación se describen los pasos necesarios para ponerlo en funcionamiento.
+
+---
+
+### 1. Configurar el modelo LLM con Ollama
+
+#### 1.1 Instalar Ollama
+
+Sigue las instrucciones oficiales en: [https://ollama.com/download](https://ollama.com/download)  
+Una vez instalado, abre una terminal y ejecuta:
+
+```bash
+ollama run llama3
+```
+Esto descargará e inicializará el modelo `llama3` localmente, dejándolo listo para recibir prompts desde el ESP32 a través del servidor Flask.
+
+### 2. Preparar el entorno de desarrollo en Arduino IDE
+#### 2.1 Instalar dependencias
+Asegúrate de tener instalada la biblioteca `LiquidCrystal_I2C` desde el Gestor de Bibliotecas de Arduino IDE.
+
+Instala también el paquete de tarjetas `ESP32 by Espressif Systems` desde el Gestor de Tarjetas.
+
+Selecciona la placa `DOIT ESP32 DEVKIT V1`.
+
+#### 2.2 Configurar IDE
+Abre Arduino IDE.
+
+En el menú Herramientas, selecciona:
+
+- Placa: DOIT ESP32 DEVKIT V1
+
+- Puerto: selecciona el COM al que esté conectado el ESP32
+
+### 3. Subir el código al ESP32
+Abre el archivo `ciber_v4.ino` del proyecto en el directorio `Asistente_ciberfisico_recordatorios/esp32_codes
+/ciber_v4/`.
+
+Haz clic en `Verificar` para compilar.
+
+Haz clic en `Subir` para cargar el código al ESP32.
+
+Durante la carga, mantén presionado el botón `BOOT` del ESP32 hasta que inicie la transferencia.
+
+### 4. Ejecutar el script de interfaz serial
+Ejecutar `interfaz_serial.py` para iniciar la comunicación desde PC,.
+>Este archivo se encuentra en el directorio `Asistente_ciberfisico_recordatorios/python_code`.
+
+```bash
+python interfaz_serial.py
+```
+
+### ✅ ¡Listo!
+El sistema comenzará a funcionar automáticamente:
+
+- El ESP32 enviará el comando "Generar" cada 30 segundos.
+
+- El servidor local procesará el prompt con el modelo llama3.
+
+- El ESP32 recibirá y validará el mensaje.
+
+- El mensaje válido será mostrado en la pantalla LCD 16x2.
+
+Si no hay mensajes válidos o ocurren errores, se mostrará "Esperando..." o mensajes de advertencia.
+> Nota: El sistema es completamente autónomo, no requiere conexión a internet, y puede ser modificado fácilmente para otros casos de uso.
+
 ## Referencias
 
 [1] Observatorio del Envejecimiento, Universidad de Costa Rica (UCR), *Primer Informe: Personas Adultas Mayores en Costa Rica*, 2023. [En línea]. Disponible en: [Primer Informe: Personas Adultas Mayores en Costa Rica ](https://fmedicina.ucr.ac.cr/wp-content/uploads/2025/06/1_PRIMER-INFORME_Envejecimiento.pdf)
