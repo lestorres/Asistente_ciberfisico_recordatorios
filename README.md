@@ -273,11 +273,18 @@ Esperando comando: "Generar"
 
 ## ⚙️ Prototipo
 
+### Prototipo Desmostrativo
+
 El prototipo del sistema se muestra en la siguiente figura.
 
 <img src="img/prototipo.png" alt="Prototipo del sistema" width="1000"/>
 
+### Verificación de Comunicación ciberfísica 
 
+En este caso se muestra el registro de comunicación, entre el microcontrolador ESP32, la Interfaz Python y el modelo de Lenguaje LlaMa3.
+<p align="center">
+  <img src="img/comunicacion.png" alt="Registro de comunicación" width="400"/>
+</p>
 
 
 ## Referencias
