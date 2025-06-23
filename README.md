@@ -300,5 +300,8 @@ En este caso se muestra el registro de comunicación, entre el microcontrolador 
 
 [3] Universidad Cenfotec, *Guía para conectar ESP32 a un servidor local con Ollama*, 2024. [En línea]. Disponible en: [Guía para conectar ESP32 a un servidor local con Ollama](https://github.com/Universidad-Cenfotec/ExpoCenfo/blob/main/Ejemplos_LLM_ESP32/ESP32_Ollama_Guide.md)
 
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
