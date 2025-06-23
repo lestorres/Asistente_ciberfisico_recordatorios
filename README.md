@@ -45,7 +45,9 @@ El sistema es capaz de generar mensajes como:
 
 La arquitectura del sistema se muestra en la siguiente imagen.
 
-<img src="img/arquitectura.png" alt="Arquitectura del sistema" width="600"/>
+<p align="center">
+  <img src="img/arquitectura.png" alt="Arquitectura del sistema" width="300"/>
+</p>
 
 ---
 
