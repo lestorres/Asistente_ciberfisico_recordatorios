@@ -1,21 +1,25 @@
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
+#include <Wire.h>                   // Comunicación I2C
+#include <LiquidCrystal_I2C.h>      // Librería para controlar pantallas LCD por I2C
 
+// Inicializa el LCD con dirección I2C 0x27 y dimensiones 16x2
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
+// Variables globales para manejo de mensajes
 String ultimoMensaje = "";
 String mensajeAnterior = "";
 bool nuevoMensajeDisponible = false;
 unsigned long tiempoUltimoMensaje = 0;
 int ciclosFallidos = 0;
 
+// Mutex para proteger acceso a variables compartidas entre tareas
 SemaphoreHandle_t mutexMensaje;
 
-// Historial para detectar repetidos
+// Historial de mensajes para evitar duplicados
 #define HISTORIAL_MAX 15
 String historialMensajes[HISTORIAL_MAX];
 int indiceHistorial = 0;
 
+// Verifica si un mensaje contiene caracteres especiales no soportados por el LCD
 bool contieneCaracteresInvalidos(const String &mensaje) {
   const char* invalidos = "áéíóúÁÉÍÓÚñÑ";
   for (int i = 0; i < mensaje.length(); i++) {
@@ -26,6 +30,7 @@ bool contieneCaracteresInvalidos(const String &mensaje) {
   return false;
 }
 
+// Verifica si un mensaje ya fue mostrado anteriormente
 bool esMensajeRepetido(const String &mensaje) {
   for (int i = 0; i < HISTORIAL_MAX; i++) {
     if (historialMensajes[i] == mensaje) {
@@ -35,11 +40,13 @@ bool esMensajeRepetido(const String &mensaje) {
   return false;
 }
 
+// Agrega un mensaje al historial para evitar repeticiones
 void agregarAMensajesRecientes(const String &mensaje) {
   historialMensajes[indiceHistorial] = mensaje;
   indiceHistorial = (indiceHistorial + 1) % HISTORIAL_MAX;
 }
 
+// Tarea: solicita un nuevo mensaje enviando "Generar" por el puerto serial cada 30 segundos
 void TaskEnviarSolicitud(void *pvParameters) {
   for (;;) {
     Serial.println("Generar");
@@ -47,10 +54,12 @@ void TaskEnviarSolicitud(void *pvParameters) {
   }
 }
 
+// Tarea: escucha el puerto serial por nuevos mensajes durante 5 segundos
 void TaskEscucharSerial(void *pvParameters) {
   for (;;) {
     String recibido = "";
     unsigned long tiempoInicio = millis();
+
     while (millis() - tiempoInicio < 5000) {
       if (Serial.available()) {
         char c = Serial.read();
@@ -63,7 +72,7 @@ void TaskEscucharSerial(void *pvParameters) {
     if (recibido.length() > 0) {
       xSemaphoreTake(mutexMensaje, portMAX_DELAY);
 
-      // Reintento si es repetido o contiene caracteres inválidos
+      // Ignora mensaje si es repetido o contiene caracteres inválidos
       if (esMensajeRepetido(recibido) || contieneCaracteresInvalidos(recibido)) {
         Serial.println("Generar");
         xSemaphoreGive(mutexMensaje);
@@ -86,6 +95,7 @@ void TaskEscucharSerial(void *pvParameters) {
   }
 }
 
+// Tarea: muestra el último mensaje recibido en la pantalla LCD
 void TaskLCDMostrar(void *pvParameters) {
   for (;;) {
     if (nuevoMensajeDisponible) {
@@ -94,10 +104,10 @@ void TaskLCDMostrar(void *pvParameters) {
       lcd.backlight();
       lcd.clear();
       lcd.setCursor(0, 0);
-      lcd.print(ultimoMensaje.substring(0, 16));
+      lcd.print(ultimoMensaje.substring(0, 16));  // Primera línea
       lcd.setCursor(0, 1);
       if (ultimoMensaje.length() > 16) {
-        lcd.print(ultimoMensaje.substring(16, 32));
+        lcd.print(ultimoMensaje.substring(16, 32));  // Segunda línea
       }
 
       nuevoMensajeDisponible = false;
@@ -107,6 +117,7 @@ void TaskLCDMostrar(void *pvParameters) {
   }
 }
 
+// Tarea: muestra mensaje "Esperando..." cuando no hay mensaje nuevo disponible
 void TaskEstadoSerial(void *pvParameters) {
   for (;;) {
     if (!nuevoMensajeDisponible && ultimoMensaje == "") {
@@ -118,20 +129,21 @@ void TaskEstadoSerial(void *pvParameters) {
   }
 }
 
+// Tarea: función "heartbeat" para mantener activo el sistema (placeholder)
 void TaskHeartbeat(void *pvParameters) {
   for (;;) {
-    // No hace nada visible (sin consola)
     vTaskDelay(15000 / portTICK_PERIOD_MS);
   }
 }
 
+// Tarea: control de flujo (aún sin implementación)
 void TaskControlFlujo(void *pvParameters) {
   for (;;) {
-    // Placeholder
     vTaskDelay(1000 / portTICK_PERIOD_MS);
   }
 }
 
+// Tarea: muestra mensaje de error en el LCD si se acumulan fallos seguidos
 void TaskManejoErrores(void *pvParameters) {
   for (;;) {
     if (ciclosFallidos >= 8) {
@@ -140,12 +152,13 @@ void TaskManejoErrores(void *pvParameters) {
       lcd.print("ERROR: Fallos");
       lcd.setCursor(0, 1);
       lcd.print("Seguidos: " + String(ciclosFallidos));
-      ciclosFallidos = 0;
+      ciclosFallidos = 0;  // Reset después de mostrar el error
     }
     vTaskDelay(10000 / portTICK_PERIOD_MS);
   }
 }
 
+// Tarea: apaga la luz de fondo del LCD si ha pasado más de 60 segundos sin nuevo mensaje
 void TaskPowerManager(void *pvParameters) {
   for (;;) {
     unsigned long ahora = millis();
@@ -156,10 +169,11 @@ void TaskPowerManager(void *pvParameters) {
   }
 }
 
+// Función principal: inicialización del sistema
 void setup() {
-  Serial.begin(115200);
-  lcd.init();
-  lcd.backlight();
+  Serial.begin(115200);       // Inicializa comunicación serial
+  lcd.init();                 // Inicializa el LCD
+  lcd.backlight();            // Enciende luz de fondo
   lcd.setCursor(0, 0);
   lcd.print("Iniciando RTOS...");
   delay(2000);
@@ -170,8 +184,9 @@ void setup() {
   delay(2000);
   lcd.clear();
 
-  mutexMensaje = xSemaphoreCreateMutex();
+  mutexMensaje = xSemaphoreCreateMutex();  // Crea el mutex
 
+  // Crea todas las tareas en el núcleo 1 del ESP32
   xTaskCreatePinnedToCore(TaskEnviarSolicitud, "EnviarSolicitud", 2048, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(TaskEscucharSerial, "EscucharSerial", 4096, NULL, 1, NULL, 1);
   xTaskCreatePinnedToCore(TaskLCDMostrar, "LCDMostrar", 2048, NULL, 1, NULL, 1);
@@ -182,6 +197,7 @@ void setup() {
   xTaskCreatePinnedToCore(TaskPowerManager, "PowerManager", 2048, NULL, 1, NULL, 1);
 }
 
+// Bucle principal: no se usa, todo está en tareas
 void loop() {
-  // Todo se maneja con tareas
+  // Las tareas de FreeRTOS se encargan del flujo
 }

@@ -241,12 +241,17 @@ El mensaje puede ser un recordatorio útil o una frase positiva.
 No repitas el último mensaje (el sistema lo controla).
 
 Ejemplos:
-- Usa los lentes para leer  
-- Dios te cuida   
-- Descansa un rato  
-- Cierra bien la puerta  
-- Te amo mucho, mamá
-- Te amo mucho, papá
+- Eres amado
+- Haz ejercicio
+- Dios te cuida siempre
+- Lee la biblia
+- Ten paciencia
+- Recuerda descansar
+- Usa tus lentes
+- Cierra bien la puerta
+- Te amo mucho, mama
+- Te amo mucho, papa
+
 
 
 Cuando diga "Generar", responde con un solo mensaje. Sin explicaciones, solo el texto.
